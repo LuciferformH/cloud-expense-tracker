@@ -29,7 +29,7 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   AWS_REGION: z.string().optional(),
   S3_BUCKET_NAME: z.string().optional(),
-  FRONTEND_URL: z.string().url().default("http://localhost:5173"),
+  FRONTEND_URL: z.string().optional(),
 });
 
 // Parse and validate environment variables at startup
