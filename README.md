@@ -2,6 +2,11 @@
 
 > A production-quality SaaS application for tracking cloud infrastructure costs with AI-powered optimization suggestions.
 
+## Live Demo
+
+- **Frontend**: https://cloud-expense-tracker.vercel.app
+- **Backend API**: https://cloud-expense-tracker-api.onrender.com/api
+
 ## Features
 
 - **Authentication**: Register, Login, JWT + Refresh Tokens, Password Reset
@@ -46,7 +51,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/cloud-expense-tracker.git
+   git clone https://github.com/LuciferformH/cloud-expense-tracker.git
    cd cloud-expense-tracker
    ```
 
