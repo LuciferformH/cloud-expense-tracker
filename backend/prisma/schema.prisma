@@ -1,0 +1,123 @@
+// ==========================================
+// Prisma Schema - Cloud Expense Tracker
+// ==========================================
+// Defines the complete database schema for the application.
+// Uses SQLite for local development (switch to PostgreSQL for production).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// User Model
+// ==========================================
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expenses      Expense[]
+  categories    Category[]
+  budgets       Budget[]
+  refreshTokens RefreshToken[]
+  passwordResets PasswordReset[]
+
+  @@map("users")
+}
+
+// ==========================================
+// Expense Model
+// ==========================================
+model Expense {
+  id            String   @id @default(uuid())
+  userId        String
+  categoryId    String?
+  amount        Float
+  description   String
+  date          DateTime
+  cloudProvider String?
+  serviceType   String?
+  region        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@map("expenses")
+}
+
+// ==========================================
+// Category Model
+// ==========================================
+model Category {
+  id     String  @id @default(uuid())
+  userId String
+  name   String
+  icon   String?
+  color  String?
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses Expense[]
+
+  @@unique([userId, name])
+  @@map("categories")
+}
+
+// ==========================================
+// Budget Model
+// ==========================================
+model Budget {
+  id             String   @id @default(uuid())
+  userId         String
+  name           String
+  monthlyLimit   Float
+  alertThreshold Float    @default(80)
+  startDate      DateTime
+  endDate        DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("budgets")
+}
+
+// ==========================================
+// Refresh Token Model
+// ==========================================
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// ==========================================
+// Password Reset Model
+// ==========================================
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_resets")
+}

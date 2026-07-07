@@ -1,0 +1,57 @@
+# ==========================================
+# Backend Dockerfile (Multi-stage)
+# ==========================================
+# Stage 1: Build TypeScript
+# Stage 2: Run production server
+# Uses Alpine for minimal image size
+
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# Copy source and build
+COPY . .
+RUN npm run prisma:generate
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# Install production dependencies only
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
+
+# Copy built app and prisma from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/prisma ./prisma
+
+# Set ownership and switch to non-root user
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+# Expose port
+EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:5000/api/health || exit 1
+
+# Start server
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "dist/server.js"]

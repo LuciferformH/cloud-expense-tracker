@@ -1,0 +1,39 @@
+# ==========================================
+# Deployment Pipeline
+# ==========================================
+# Deploys to Vercel (frontend) and Render (backend)
+# after CI passes on main branch.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # Deploy Frontend to Vercel
+  deploy-frontend:
+    name: Deploy Frontend (Vercel)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./frontend
+
+  # Deploy Backend to Render (auto-deploy via webhook)
+  deploy-backend:
+    name: Deploy Backend (Render)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Render
+        uses: johnbeyren/render-deploy-action@v1
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}

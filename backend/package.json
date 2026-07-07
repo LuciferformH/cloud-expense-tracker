@@ -1,0 +1,54 @@
+{
+  "name": "cloud-expense-tracker-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Cloud Expense Tracker - SaaS cloud cost management platform",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "eslint src --ext .ts",
+    "prisma:generate": "prisma generate",
+    "prisma:generate:prod": "prisma generate --schema=prisma/schema.postgresql.prisma",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:prod": "prisma migrate deploy --schema=prisma/schema.postgresql.prisma",
+    "prisma:seed": "ts-node prisma/seed.ts",
+    "prisma:studio": "prisma studio",
+    "test": "jest --passWithNoTests"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "csv-stringify": "^6.5.1",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.16",
+    "pdfkit": "^0.15.2",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.2",
+    "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.15.3",
+    "@types/nodemailer": "^6.4.17",
+    "@types/pdfkit": "^0.13.9",
+    "@types/uuid": "^10.0.0",
+    "jest": "^29.7.0",
+    "prisma": "^6.9.0",
+    "ts-jest": "^29.3.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
